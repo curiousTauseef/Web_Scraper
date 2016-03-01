@@ -12,12 +12,16 @@ def WashingtonPost(url):
 
     # Soup object
     soup = BeautifulSoup(webpage)
-    someText = ' '.join(map(lambda x: x.text, soup.find_all('article')))
 
-    # We have everything in between our article tags; but that also includes some crud we do not need; Real stuff is inside <p></p>
-    soup2 = BeautifulSoup(someText)
+    inside_article = str(soup.find_all('article'))
+    # We are inside the <article> </article> tags now
+    # The real info is inside the <p> tags of these <article> tags!
+    
+    soup2 = BeautifulSoup(inside_article, "html.parser")
+    #"html.parser" is a crucial argument : http://stackoverflow.com/questions/14822188/dont-put-html-head-and-body-tags-automatically-beautifulsoup
+
     articleBody = ' '.join(map(lambda x: x.text, soup2.find_all('p')))
-
+    
     return soup.title.text, articleBody
 
 
