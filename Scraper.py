@@ -32,15 +32,10 @@ def TheHindu(url):
 
     # It contains a sub-heading in a div "articleLead"; Let's take care of that
     sub_heading = ''.join(soup.find("div", {"class" : "articleLead"}).text)
-
-    inside_article = str(soup.find_all("p", {"class" : "body"}))
     
-    soup2 = BeautifulSoup(inside_article, "html.parser")
-
-    articleBody = ' '.join(map(lambda x: x.text, soup2.find_all('p')))
+    articleBody = ' '.join(map(lambda x: x.text, soup.find_all("p", {"class" : "body"})))
     
     article = sub_heading + articleBody
-    
     return soup.title.text, article
 
 
