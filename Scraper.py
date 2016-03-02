@@ -1,18 +1,16 @@
 # Extracting main article content from a url, using BeautifulSoup
-
 from bs4 import BeautifulSoup
 import urllib2
 
+################################################################################
 # First function is for WashingtonPost: It will take in the url and return the article & title_of_article
 # Exploiting the property of www.washingtonpost.com- that it encloses the main body of the article in a special <article></article> tag;
 
 def WashingtonPost(url):
     # Download the URL
     webpage = urllib2.urlopen(url).read().decode('utf8')
-
-    # Soup object
     soup = BeautifulSoup(webpage)
-
+    
     inside_article = str(soup.find_all('article'))
     # We are inside the <article> </article> tags now
     # The real info is inside the <p> tags of these <article> tags!
@@ -24,29 +22,27 @@ def WashingtonPost(url):
     
     return soup.title.text, articleBody
 
+################################################################################
+# Second function is for TheHindu: returns the article & title_of_article
+# Exploiting the property- that it encloses the main body of the article in a <p class="body"></p>;
 
 def TheHindu(url):
-    # Download the URL
     webpage = urllib2.urlopen(url).read().decode('utf8')
-
-    # Soup object
     soup = BeautifulSoup(webpage)
 
     # It contains a sub-heading in a div "articleLead"; Let's take care of that
     sub_heading = ''.join(soup.find("div", {"class" : "articleLead"}).text)
 
     inside_article = str(soup.find_all("p", {"class" : "body"}))
-    # We are inside the <article> </article> tags now
-    # The real info is inside the <p> tags of these <article> tags!
     
     soup2 = BeautifulSoup(inside_article, "html.parser")
-    #"html.parser" is a crucial argument : http://stackoverflow.com/questions/14822188/dont-put-html-head-and-body-tags-automatically-beautifulsoup
 
     articleBody = ' '.join(map(lambda x: x.text, soup2.find_all('p')))
     
     article = sub_heading + articleBody
     
     return soup.title.text, article
+
 
 # Using the above functions
 
