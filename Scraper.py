@@ -73,6 +73,8 @@ def NYtimes(url):
 #output = TheHindu(url2)
 output = NYtimes(url3)
 
+url3 = raw_input('Enter a NYtimes url: ')
+
 print "TITLE:", output[0]
 print "Article Body:", output[1]
 
