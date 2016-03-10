@@ -14,6 +14,18 @@ def SantaBanta_SMS(url):
         f.write(text.encode('utf8'))
         f.close()
 
-url = 'http://www.santabanta.com/sms/clean/hinglish/450/?page='
 
-SantaBanta_SMS(url)
+# Hinglish jokes: http://jokes.lipy.com/tags/hinglish/page/1
+
+def JokesLipy(url):
+    webpage = urllib2.urlopen(url).read().decode('utf8')
+    soup = BeautifulSoup(webpage)
+    text = ' '.join(map(lambda x: x.text, soup.findAll("div", {"class":"j-q-description"})))
+    return text
+
+
+#url = 'http://www.santabanta.com/sms/clean/hinglish/450/?page='
+#SantaBanta_SMS(url)
+
+url = 'http://jokes.lipy.com/tags/hinglish/page/1'
+print JokesLipy(url)
