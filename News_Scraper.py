@@ -77,6 +77,24 @@ def CNN(url):
 
     return soup.title.text, article
 
+################################################################################
+# Next is for CNN
+
+def CNN(url):
+    webpage = urllib2.urlopen(url).read().decode('utf8')
+    soup = BeautifulSoup(webpage)
+    # Article is inside <p> tags (except the last <p> tag which isn't useful)
+    # Using simply for loop this time-
+    all_p_tags = []
+    for tag in soup.findAll("p"):
+        all_p_tags.append(tag)
+
+    article = ""
+    for x in all_p_tags[:-2]:
+        article += x.text
+
+    return soup.title.text, article
+
 
 
 
@@ -96,9 +114,3 @@ output = CNN(url4)
 
 print "TITLE:", output[0]
 print "Article Body:", output[1]
-
-
-
-
-
-
