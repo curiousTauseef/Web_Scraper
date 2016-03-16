@@ -3,8 +3,10 @@ from bs4 import BeautifulSoup
 import urllib2
 from cookielib import CookieJar
 
+# The functions will take as input the url and return the article & title_of_article
+
 ################################################################################
-# First function is for WashingtonPost: It will take in the url and return the article & title_of_article
+# For WashingtonPost
 # Exploiting the property of www.washingtonpost.com- that it encloses the main body of the article in a special <article></article> tag;
 
 def WashingtonPost(url):
@@ -24,7 +26,7 @@ def WashingtonPost(url):
     return soup.title.text, articleBody
 
 ################################################################################
-# Second function is for TheHindu: returns the article & title_of_article
+# For TheHindu
 # Exploiting the property- that it encloses the main body of the article in a <p class="body"></p>;
 
 def TheHindu(url):
@@ -40,7 +42,7 @@ def TheHindu(url):
     return soup.title.text, article
 
 ################################################################################
-# Third function is for TheNewYorkTimes
+# For TheNewYorkTimes
 # Exploiting the property that the article is inside <p class="story-body-text story-content"></p>;
 
 def NYtimes(url):
@@ -60,7 +62,7 @@ def NYtimes(url):
     return soup.title.text, articleBody
 
 ################################################################################
-# Next is for CNN
+# For CNN
 
 def CNN(url):
     webpage = urllib2.urlopen(url).read().decode('utf8')
