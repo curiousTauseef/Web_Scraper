@@ -8,17 +8,15 @@ import requests
 
 
 # For WashingtonPost
-# Article is inside <article></article>
 def WashingtonPost(url):
     try:
         webpage = urllib2.urlopen(url).read().decode('utf8')
     except:
         return (None, None)
+
     soup = BeautifulSoup(webpage)
-    
+
     inside_article = str(soup.find_all('article'))
-    # The real info is inside the <p> tags of these <article> tags
-    
     soup2 = BeautifulSoup(inside_article, "html.parser")
     #"html.parser" is a crucial argument : http://stackoverflow.com/questions/14822188/dont-put-html-head-and-body-tags-automatically-beautifulsoup
 
@@ -28,12 +26,15 @@ def WashingtonPost(url):
 
 
 # For TheHindu
-# Article is inside <p class="body"></p>
 def TheHindu(url):
-    webpage = urllib2.urlopen(url).read().decode('utf8')
+    try:
+        webpage = urllib2.urlopen(url).read().decode('utf8')
+    except:
+        return (None, None)
+
     soup = BeautifulSoup(webpage)
 
-    # It contains a sub-heading in a div "articleLead"; Let's take care of that
+    # It contains a sub-heading in a div "articleLead"
     sub_heading = ''.join(soup.find("div", {"class" : "articleLead"}).text)
     
     articleBody = ' '.join(map(lambda x: x.text, soup.find_all("p", {"class" : "body"})))
@@ -43,14 +44,13 @@ def TheHindu(url):
 
 
 # For TheNewYorkTimes
-# Article is inside <p class="story-body-text story-content"></p>
 def NYtimes(url):
     cj = CookieJar()
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
     webpage = opener.open(url).read().decode('utf8')
 
     # Gives HTTP infinite loop error on using: webpage = urllib2.urlopen(url).read().decode('utf8')
-    # Checkout: http://stackoverflow.com/questions/9926023/handling-rss-redirects-with-python-urllib2
+    # http://stackoverflow.com/questions/9926023/handling-rss-redirects-with-python-urllib2
     
     soup = BeautifulSoup(webpage)
 
@@ -63,8 +63,13 @@ def NYtimes(url):
 
 # For CNN
 def CNN(url):
-    webpage = urllib2.urlopen(url).read().decode('utf8')
+    try:
+        webpage = urllib2.urlopen(url).read().decode('utf8')
+    except:
+        return (None, None)
+
     soup = BeautifulSoup(webpage)
+    
     # Article is inside <p> tags for money.cnn {except the last few <p> tags}
     if "money.cnn" in url:
         all_p_tags = []
@@ -77,14 +82,20 @@ def CNN(url):
 
     # Article inside <p class="zn-body__paragraph"> for edition.cnn
     elif "edition.cnn" in url:
-        article = " ".join(map(lambda x: x.text, soup.find_all("p", {"class" : "zn-body__paragraph"})))
-
+        first_sent = soup.find("p", {"class" : "zn-body__paragraph"}).text
+        rest_of_article = " ".join(map(lambda x: x.text, soup.find_all("div", {"class" : "zn-body__paragraph"})))
+        article = first_sent + " " + rest_of_article
+    
     return soup.title.text, article
 
 
 # For Hindustan Times
 def HindustanTimes(url):
-    webpage = urllib2.urlopen(url).read().decode('utf8')
+    try:
+        webpage = urllib2.urlopen(url).read().decode('utf8')
+    except:
+        return (None, None)
+
     soup = BeautifulSoup(webpage)
     
     article = ' '.join(map(lambda x: x.text, soup.findAll("p")))
@@ -117,8 +128,8 @@ def Scraper(url, distinguisher='2016'):
 
     return all_content
 
-url = "https://www.washingtonpost.com/business/technology/"
-print Scraper(url)
+#url = "https://www.washingtonpost.com/business/technology/"
+#print Scraper(url)
 
 # Using the above functions
 
@@ -126,7 +137,7 @@ print Scraper(url)
 #url2 = "http://www.thehindu.com/business/budget/highlights-of-union-budget-201617/article8295451.ece?homepage=true"
 #url3 = "http://www.nytimes.com/2016/03/02/technology/apple-and-fbi-face-off-before-house-judiciary-committee.html?hp&action=click&pgtype=Homepage&clickSource=story-heading&module=first-column-region&region=top-news&WT.nav=top-news"
 #url4 = "http://money.cnn.com/2016/03/09/technology/bolt-electric-bike/index.html"
-#url4 = "http://edition.cnn.com/2016/03/14/world/exomars-mars-methane-mission-launch-irpt/index.html"
+#url4 = "http://money.cnn.com/2016/03/25/technology/google-maps-house/index.html"
 #url5 = "http://www.hindustantimes.com/tech/reboot-reality-now-swim-with-sharks-sing-with-paul-mccartney-on-virtual-reality-headsets/story-beTNUkO5kkCxL9tUJIeeOO.html"
 #url = "http://www.thehindu.com/sci-tech/technology/gadgets/apple-unveils-smaller-iphone-se-starting-at-399/article8382305.ece"
 
@@ -135,6 +146,24 @@ print Scraper(url)
 #output = NYtimes(url3)
 #output = CNN(url4)
 #output = HindustanTimes(url5)
-#url = raw_input('Enter a NYtimes url: ')
-#print "\nTITLE:", output[0]
-#print "\nArticle Body:", output[1]
+
+url = raw_input('Hi! Welcome to myScraper. This program can scrape the following websites-\nWashingtonPost\nTheHindu\nNewYorkTimes\nCNN\nHindustanTimes\nPlease, enter the URL: ')
+
+output = (None, None)
+
+if 'cnn.com' in url:
+    output = CNN(url)
+elif 'washingtonpost.com' in url:
+    output = WashingtonPost(url)
+elif 'nytimes.com' in url:
+    output = NYtimes(url)
+elif 'thehindu.com' in url:
+    output = TheHindu(url)
+elif 'hindustantimes.com' in url:
+    output = HindustanTimes(url)
+else:
+    print "\n\nURL not found!! Please enter a valid URL."
+
+print "\nTITLE:", output[0]
+print "\nArticle Body:", output[1]
+
