@@ -106,14 +106,14 @@ def HindustanTimes(url):
 
 # Main Scraper Function for Washington:
 # Tech: It's either switch or innovation
-def Scraper(url, distinguisher='2016'):
+def W_Scraper(url):
     req = urllib2.Request(url)
     page = urllib2.urlopen(req)
     soup = BeautifulSoup(page)
     
     all_content = {}
     
-    errors  = 0
+    errors = 0
     for link in soup.find_all('a'):
         try:
             _url = link['href']
@@ -129,7 +129,32 @@ def Scraper(url, distinguisher='2016'):
     return all_content
 
 #url = "https://www.washingtonpost.com/business/technology/"
-#print Scraper(url)
+#print W_Scraper(url)
+
+# Main Scraper Function for TheHindu:
+def TH_Scraper(url):
+    webpage = urllib2.urlopen(url).read().decode('utf8')
+    soup = BeautifulSoup(webpage)
+
+    all_content = {}
+    errors = 0
+
+    for link in soup.find_all('a'):
+        try:
+            _url = link['href']
+            if _url not in all_content and '/sci-tech/' in _url and 'article' in _url:
+                article = TheHindu(_url)
+                if len(article) > 0:
+                    all_content[_url] = article
+        
+        except:
+            errors += 1
+
+    return all_content
+
+url = 'http://www.thehindu.com/sci-tech/'
+print TH_Scraper(url)
+
 
 # Using the above functions
 
@@ -147,23 +172,23 @@ def Scraper(url, distinguisher='2016'):
 #output = CNN(url4)
 #output = HindustanTimes(url5)
 
-url = raw_input('Hi! Welcome to myScraper. This program can scrape the following websites-\nWashingtonPost\nTheHindu\nNewYorkTimes\nCNN\nHindustanTimes\nPlease, enter the URL: ')
-
-output = (None, None)
-
-if 'cnn.com' in url:
-    output = CNN(url)
-elif 'washingtonpost.com' in url:
-    output = WashingtonPost(url)
-elif 'nytimes.com' in url:
-    output = NYtimes(url)
-elif 'thehindu.com' in url:
-    output = TheHindu(url)
-elif 'hindustantimes.com' in url:
-    output = HindustanTimes(url)
-else:
-    print "\n\nURL not found!! Please enter a valid URL."
-
-print "\nTITLE:", output[0]
-print "\nArticle Body:", output[1]
+#url = raw_input('Hi! Welcome to myScraper. This program can scrape the following websites-\nWashingtonPost\nTheHindu\nNewYorkTimes\nCNN\nHindustanTimes\nPlease, enter the URL: ')
+#
+#output = (None, None)
+#
+#if 'cnn.com' in url:
+#    output = CNN(url)
+#elif 'washingtonpost.com' in url:
+#    output = WashingtonPost(url)
+#elif 'nytimes.com' in url:
+#    output = NYtimes(url)
+#elif 'thehindu.com' in url:
+#    output = TheHindu(url)
+#elif 'hindustantimes.com' in url:
+#    output = HindustanTimes(url)
+#else:
+#    print "\n\nURL not found!! Please enter a valid URL."
+#
+#print "\nTITLE:", output[0]
+#print "\nArticle Body:", output[1]
 
