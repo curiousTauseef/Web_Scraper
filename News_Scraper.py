@@ -152,8 +152,31 @@ def TH_Scraper(url):
 
     return all_content
 
-url = 'http://www.thehindu.com/sci-tech/'
-print TH_Scraper(url)
+#url = 'http://www.thehindu.com/sci-tech/'
+#print TH_Scraper(url)
+
+# Main Scraper Function for NYTimes:
+def NYT_Scraper(url):
+    webpage = urllib2.urlopen(url).read().decode('utf8')
+    soup = BeautifulSoup(webpage)
+
+    all_content = {}
+    errors = 0
+
+    for link in soup.find_all('a'):
+        try:
+            _url = link['href']
+            if _url not in all_content and '2016' in _url and '/technology/' in _url:
+                print _url
+        
+        except:
+            errors += 1
+
+    return all_content
+
+
+url = 'http://www.nytimes.com/pages/technology/index.html'
+print NYT_Scraper(url)
 
 
 # Using the above functions
