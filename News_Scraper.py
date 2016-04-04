@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 import urllib2
 from cookielib import CookieJar
 import requests
+import re
 
+#-----------------------------------------------------------#
 # The functions will take as input the url and return the article & title_of_article
-
-
 # For WashingtonPost
 def WashingtonPost(url):
     try:
@@ -102,7 +102,7 @@ def HindustanTimes(url):
 
     return soup.title.text, article
 
-
+#-----------------------------------------------------------#
 
 # Main Scraper Function for Washington:
 # Tech: It's either switch or innovation
@@ -162,13 +162,20 @@ def NYT_Scraper(url):
 
     all_content = {}
     errors = 0
-
+    exp = r'.html\?.*'
+    
     for link in soup.find_all('a'):
         try:
             _url = link['href']
-            if _url not in all_content and '2016' in _url and '/technology/' in _url:
-                print _url
-        
+            if '2016' in _url and '/technology/' in _url:
+                # Clip the URL:
+                _url = re.sub(exp, ".html", _url)
+                if _url not in all_content:
+                    article = NYtimes(_url)
+#                    print _url
+                    if len(article) > 0:
+                        all_content[_url] = article
+
         except:
             errors += 1
 
@@ -178,7 +185,7 @@ def NYT_Scraper(url):
 url = 'http://www.nytimes.com/pages/technology/index.html'
 print NYT_Scraper(url)
 
-
+#-----------------------------------------------------------#
 # Using the above functions
 
 #url1 = "https://www.washingtonpost.com/politics/on-a-fateful-super-tuesday-polls-have-opened-across-the-south-and-new-england/2016/03/01/995c7ec4-df64-11e5-846c-10191d1fc4ec_story.html?hpid=hp_hp-top-table-main_supertuesdayweb-715am%3Ahomepage%2Fstory"
