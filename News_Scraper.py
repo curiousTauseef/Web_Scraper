@@ -106,7 +106,9 @@ def HindustanTimes(url):
 
 # Main Scraper Function for Washington:
 # Tech: It's either switch or innovation
-def W_Scraper(url):
+# For tech: dial 1
+# For sports: dial 0
+def W_Scraper(url, dial=1):
     req = urllib2.Request(url)
     page = urllib2.urlopen(req)
     soup = BeautifulSoup(page)
@@ -117,22 +119,33 @@ def W_Scraper(url):
     for link in soup.find_all('a'):
         try:
             _url = link['href']
-            if _url not in all_content and '2016' in _url and 'washington' in _url and ('switch' in _url or 'innovation' in _url) and '.com/video/' not in _url:
-                article = WashingtonPost(_url)
-                if len(article) > 0:
-                    all_content[_url] = article
-#                print _url + "  "
+            if dial == 1:
+                if _url not in all_content and '2016' in _url and 'washington' in _url and ('switch' in _url or 'innovation' in _url) and '.com/video/' not in _url:
+                    article = WashingtonPost(_url)
+                    if len(article) > 0:
+                        all_content[_url] = article
+#                    print _url + "  "
+            # Sports
+            else:
+                if _url not in all_content and '2016' in _url and 'washington' in _url:
+                    article = WashingtonPost(_url)
+                    if len(article) > 0:
+                        all_content[_url] = article
+#                    print _url + "  "
 
+    
         except:
             errors += 1
 
     return all_content
 
-#url = "https://www.washingtonpost.com/business/technology/"
-#print W_Scraper(url)
+#url = "https://www.washingtonpost.com/sports"
+#print W_Scraper(url, 0)
 
 # Main Scraper Function for TheHindu:
-def TH_Scraper(url):
+# For tech: dial 1
+# For sports: dial 0
+def TH_Scraper(url, dial=1):
     webpage = urllib2.urlopen(url).read().decode('utf8')
     soup = BeautifulSoup(webpage)
 
@@ -142,18 +155,26 @@ def TH_Scraper(url):
     for link in soup.find_all('a'):
         try:
             _url = link['href']
-            if _url not in all_content and '/sci-tech/' in _url and 'article' in _url:
-                article = TheHindu(_url)
-                if len(article) > 0:
-                    all_content[_url] = article
-        
+            
+            if dial == 1:
+                if _url not in all_content and '/sci-tech/' in _url and 'article' in _url:
+                    article = TheHindu(_url)
+                    if len(article) > 0:
+                        all_content[_url] = article
+    
+            else:
+                if _url not in all_content and '/sport/' in _url and 'article' in _url:
+                    article = TheHindu(_url)
+                    if len(article) > 0:
+                        all_content[_url] = article
+
         except:
             errors += 1
 
     return all_content
 
-#url = 'http://www.thehindu.com/sci-tech/'
-#print TH_Scraper(url)
+url = 'http://www.thehindu.com/sport'
+print TH_Scraper(url, 0)
 
 # Main Scraper Function for NYTimes:
 def NYT_Scraper(url):
@@ -182,8 +203,8 @@ def NYT_Scraper(url):
     return all_content
 
 
-url = 'http://www.nytimes.com/pages/technology/index.html'
-print NYT_Scraper(url)
+#url = 'http://www.nytimes.com/pages/technology/index.html'
+#print NYT_Scraper(url)
 
 #-----------------------------------------------------------#
 # Using the above functions
