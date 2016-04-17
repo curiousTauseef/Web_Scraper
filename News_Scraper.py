@@ -177,7 +177,9 @@ url = 'http://www.thehindu.com/sport'
 print TH_Scraper(url, 0)
 
 # Main Scraper Function for NYTimes:
-def NYT_Scraper(url):
+# For tech: dial 1
+# For sports: dial 0
+def NYT_Scraper(url, dial=1):
     webpage = urllib2.urlopen(url).read().decode('utf8')
     soup = BeautifulSoup(webpage)
 
@@ -188,14 +190,25 @@ def NYT_Scraper(url):
     for link in soup.find_all('a'):
         try:
             _url = link['href']
-            if '2016' in _url and '/technology/' in _url:
-                # Clip the URL:
-                _url = re.sub(exp, ".html", _url)
-                if _url not in all_content:
-                    article = NYtimes(_url)
-#                    print _url
-                    if len(article) > 0:
-                        all_content[_url] = article
+            
+            if dial == 1:
+                if '2016' in _url and '/technology/' in _url:
+                    # Clip the URL:
+                    _url = re.sub(exp, ".html", _url)
+                    if _url not in all_content:
+                        article = NYtimes(_url)
+#                        print _url
+                        if len(article) > 0:
+                            all_content[_url] = article
+    
+            else:
+                if '2016' in _url and '/sports/' in _url:
+                    # Clip the URL:
+                    _url = re.sub(exp, ".html", _url)
+                    if _url not in all_content:
+                        article = NYtimes(_url)
+                        if len(article) > 0:
+                            all_content[_url] = article
 
         except:
             errors += 1
@@ -203,8 +216,8 @@ def NYT_Scraper(url):
     return all_content
 
 
-#url = 'http://www.nytimes.com/pages/technology/index.html'
-#print NYT_Scraper(url)
+#url = 'http://www.nytimes.com/pages/sports/index.html '
+#print NYT_Scraper(url, 0)
 
 #-----------------------------------------------------------#
 # Using the above functions
