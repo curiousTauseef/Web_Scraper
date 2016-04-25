@@ -173,8 +173,8 @@ def TH_Scraper(url, dial=1):
 
     return all_content
 
-url = 'http://www.thehindu.com/sport'
-print TH_Scraper(url, 0)
+#url = 'http://www.thehindu.com/sport'
+#print TH_Scraper(url, 0)
 
 # Main Scraper Function for NYTimes:
 # For tech: dial 1
@@ -218,6 +218,46 @@ def NYT_Scraper(url, dial=1):
 
 #url = 'http://www.nytimes.com/pages/sports/index.html '
 #print NYT_Scraper(url, 0)
+
+# Main Scraper Function for HindustanTimes:
+# For tech: dial 1
+# For sports: dial 0
+def HT_Scraper(url, dial=1):
+    webpage = urllib2.urlopen(url).read().decode('utf8')
+    soup = BeautifulSoup(webpage)
+
+    all_content = {}
+    errors = 0
+    exp = r'.html\?.*'
+    
+    for link in soup.find_all('a'):
+        try:
+            _url = link['href']
+            
+            if dial == 1:
+                if 'story-' in _url and '/tech' in _url and '/photos/' not in _url and '/videos/' not in _url:
+                    if _url not in all_content:
+                        article = HindustanTimes(_url)
+#                        print _url + "\n"
+                        if len(article) > 0:
+                            all_content[_url] = article
+    
+            else:
+                if 'story-' in _url and ('/other-sports/' in _url or '/cricket/' in _url or '/football/' in _url or '/tennis/' in _url) and '/photos/' not in _url and '/videos/' not in _url:
+                    if _url not in all_content:
+                        article = HindustanTimes(_url)
+                        if len(article) > 0:
+                            all_content[_url] = article
+
+        except:
+            errors += 1
+
+    return all_content
+
+
+#url = 'http://www.hindustantimes.com/tech/'
+#print HT_Scraper(url, 1)
+
 
 #-----------------------------------------------------------#
 # Using the above functions
